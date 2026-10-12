@@ -6,6 +6,7 @@ CREATE TABLE "dogdays"."userPreferences" (
   "userId"                uuid,
   "legacyUserId"          uuid,
   "currentAcademicPeriod" integer,
+  "colorScheme"           text,
   CONSTRAINT "userPreferences_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "userPreferences_userId_fkey" FOREIGN KEY ("userId") REFERENCES auth.users (id) ON DELETE CASCADE,
   CONSTRAINT "userPreferences_userId_key" UNIQUE ("userId"),
@@ -25,7 +26,7 @@ CREATE POLICY "users_own_prefs" ON "dogdays"."userPreferences"
 -- (service_role) writes it. If members could, one could squat another
 -- member's copied row and make the copy skip it.
 GRANT SELECT ON TABLE "dogdays"."userPreferences" TO "authenticated";
-GRANT INSERT ("userId", "currentAcademicPeriod") ON TABLE "dogdays"."userPreferences" TO "authenticated";
-GRANT UPDATE ("userId", "currentAcademicPeriod") ON TABLE "dogdays"."userPreferences" TO "authenticated";
+GRANT INSERT ("userId", "currentAcademicPeriod", "colorScheme") ON TABLE "dogdays"."userPreferences" TO "authenticated";
+GRANT UPDATE ("userId", "currentAcademicPeriod", "colorScheme") ON TABLE "dogdays"."userPreferences" TO "authenticated";
 GRANT DELETE ON TABLE "dogdays"."userPreferences" TO "authenticated";
 GRANT ALL ON TABLE "dogdays"."userPreferences" TO "service_role";
