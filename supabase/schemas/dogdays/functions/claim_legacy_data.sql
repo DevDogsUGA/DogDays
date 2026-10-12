@@ -95,3 +95,4 @@ $function$;
 REVOKE ALL ON FUNCTION dogdays.claim_legacy_data () FROM PUBLIC;
 
 GRANT EXECUTE ON FUNCTION dogdays.claim_legacy_data () TO "authenticated";
+-- pin check
