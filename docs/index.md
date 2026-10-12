@@ -61,3 +61,5 @@ members.
 - [Testing](./guides/testing.md)
 - [The catalog](./guides/catalog.md), [the database](./guides/schema.md), [generation](./guides/generation.md)
 - [Deployment](./infrastructure/deployment.md)
+
+<!-- checkpoint 4 throwaway: fork PR with no secrets -->
