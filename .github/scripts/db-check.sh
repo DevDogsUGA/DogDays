@@ -17,14 +17,14 @@
 # Environment:
 #   BASE_SHA           the commit the pull request is compared with (required)
 #   SUPABASE           the CLI to run; default `supabase`
-#   DEVTOOLS           how to run devtools; default `npx --yes @devdogsuga/devtools@next`
+#   DEVTOOLS           how to run devtools; default `pnpm dlx @devdogsuga/devtools@next`
 #   GITHUB_TOKEN       lifts the anonymous API limit when downloading the base types
 #   GITHUB_STEP_SUMMARY  the markdown summary is appended here when set
 set -euo pipefail
 
 here=$(cd "$(dirname "$0")" && pwd)
 supabase=${SUPABASE:-supabase}
-devtools=${DEVTOOLS:-npx --yes @devdogsuga/devtools@next}
+devtools=${DEVTOOLS:-pnpm dlx @devdogsuga/devtools@next}
 summary=${GITHUB_STEP_SUMMARY:-/dev/stderr}
 base=${BASE_SHA:?BASE_SHA is required}
 

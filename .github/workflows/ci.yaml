@@ -63,6 +63,7 @@ jobs:
           # The base branch's schema and types are read from git.
           fetch-depth: 0
       - uses: ./.github/actions/setup-supabase
+      - uses: ./.github/actions/setup-devtools
       - name: Apply, test and generate
         env:
           BASE_SHA: ${{ github.event_name == 'merge_group' && github.event.merge_group.base_sha || github.event_name == 'push' && github.event.before || github.event.pull_request.base.sha }}

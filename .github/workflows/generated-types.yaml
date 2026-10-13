@@ -44,6 +44,7 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: ./.github/actions/setup-supabase
+      - uses: ./.github/actions/setup-devtools
       - name: Build the models and upload them
         env:
           GH_TOKEN: ${{ github.token }}

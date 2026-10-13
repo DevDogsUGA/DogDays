@@ -21,7 +21,7 @@
 set -euo pipefail
 
 here=$(cd "$(dirname "$0")" && pwd)
-devtools=${DEVTOOLS:-npx --yes @devdogsuga/devtools@next}
+devtools=${DEVTOOLS:-pnpm dlx @devdogsuga/devtools@next}
 repo=${GITHUB_REPOSITORY:?GITHUB_REPOSITORY is required}
 tag=${GENERATED_TYPES_TAG:-generated-types}
 keep=${GENERATED_TYPES_KEEP:-200}

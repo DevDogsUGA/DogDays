@@ -1,0 +1,14 @@
+name: Set up devtools
+description: Node and the pnpm that package.json pins, so `pnpm dlx @devdogsuga/devtools@next` runs (what the .github/scripts default to).
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      with:
+        node-version: 22
+    - name: Enable the pnpm this repository pins
+      shell: bash
+      run: |
+        corepack enable
+        pnpm --version
