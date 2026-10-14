@@ -1,0 +1,93 @@
+name: E2E setup
+
+# Does a new member's setup still work with the devtools they will actually get?
+# This runs the steps the docs tell a member to run, with
+# `@devdogsuga/devtools@next` exactly as `pnpm devtools` resolves it, against a
+# local Docker Supabase stack: .github/scripts/e2e-setup.sh. DevDogsUGA's CI
+# runs the same script with a packed build of a devtools change, before it
+# publishes (packages/devtools). This workflow catches the other direction: the
+# published `@next` drifting from this product, or this product's setup files
+# drifting from `@next`.
+#
+# Runs nightly, on a pull request that touches a setup file, and by hand. A
+# nightly failure opens (or comments on) one `e2e-failure` issue, like
+# DevDogsUGA's Smoke workflow. Nothing here needs a secret, so fork pull
+# requests run it too.
+#
+# "Sign in with DevDogs" (OAuth). Waits for the test OAuth client. Once these
+# exist, the job registers the provider on the local stack with them (and the
+# scripted sign-in is written next). Until then it runs with --skip-oauth.
+#   secrets:   E2E_OAUTH_CLIENT_ID, E2E_OAUTH_CLIENT_SECRET
+#   variable:  E2E_OAUTH_BASE_URL  (the platform API the client lives on, for
+#              example https://api-staging.devdogsuga.org)
+# Fork pull requests never get them (GitHub withholds secrets from forks, and
+# the expression below also refuses pull_request events).
+on:
+  schedule:
+    - cron: "37 7 * * *"
+  pull_request:
+    paths:
+      - devtools.config.json
+      - supabase/**
+      - .env.example
+      - docs/getting-started/**
+      - .github/scripts/e2e-*
+      - .github/workflows/e2e-setup.yaml
+  workflow_dispatch:
+
+concurrency:
+  group: e2e-setup-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      # The test OAuth client. Empty until Sloan creates it (see above), and
+      # always empty on a pull request.
+      DEVDOGS_OAUTH_CLIENT_ID: ${{ github.event_name != 'pull_request' && secrets.E2E_OAUTH_CLIENT_ID || '' }}
+      DEVDOGS_OAUTH_CLIENT_SECRET: ${{ github.event_name != 'pull_request' && secrets.E2E_OAUTH_CLIENT_SECRET || '' }}
+      DEVDOGS_OAUTH_BASE_URL: ${{ vars.E2E_OAUTH_BASE_URL }}
+      DEVTOOLS_TELEMETRY: "0"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: ./.github/actions/setup-devtools
+      - name: Which devtools will run
+        run: pnpm --config.ignore-scripts=true dlx @devdogsuga/devtools@next --version
+      - name: Set up dogdays as the docs say, then do what a member does next
+        run: bash .github/scripts/e2e-setup.sh
+
+  # The same alert as DevDogsUGA's Smoke workflow: one open issue, commented on
+  # while the nightly keeps failing. GitHub emails the people watching the repository.
+  report:
+    needs: setup
+    if: always() && github.event_name == 'schedule' && needs.setup.result == 'failure'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Open or update the e2e-failure issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          gh label create e2e-failure --repo "$GITHUB_REPOSITORY" --color d73a4a \
+            --description "The nightly end-to-end setup check failed" 2>/dev/null || true
+          body="Run: $RUN_URL"
+          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --label e2e-failure --state open --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --repo "$GITHUB_REPOSITORY" --body "Still failing. $body"
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" --label e2e-failure \
+              --title "The nightly setup check is failing" \
+              --body "A new member's setup (the docs' steps with \`@devdogsuga/devtools@next\`) failed. $body
+
+          Reproduce it locally with \`bash .github/scripts/e2e-setup.sh\`."
+          fi
