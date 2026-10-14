@@ -38,7 +38,8 @@ system `prefers-color-scheme`, not the platform's design language.
 
 Once DogDays' Bitwarden projects (`dogdays-preflight`, `dogdays-staging`,
 `dogdays-production`) are provisioned, set a GitHub environment's variables and
-secrets with `backstage env push --repo dogdays --target <target>` from a
-Backstage clone instead of `gh secret set`, and compare the file, Bitwarden and
-GitHub with `backstage env audit --repo dogdays --target <target>`. The file is
+secrets with `pnpm backstage env push --repo dogdays --target <target>` from a
+DevDogsUGA checkout (its root script runs `@devdogsuga/backstage@next`) instead
+of `gh secret set`, and compare the file, Bitwarden and GitHub with
+`pnpm backstage env audit --repo dogdays --target <target>`. The file is
 `.env.<target>` in this checkout, which git ignores.
