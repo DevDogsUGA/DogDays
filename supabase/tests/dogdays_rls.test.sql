@@ -7,7 +7,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(34);
+select plan(44);
 
 -- How many rows a statement touched, run as whoever is calling. (pgTAP cannot
 -- wrap a data-modifying statement, and a policy that hides a row makes an
@@ -83,6 +83,22 @@ select lives_ok($$insert into dogdays."userSavedPlans" (id, "userId", "academicP
 select lives_ok($$update dogdays."userSavedPlans" set "courseIds" = '{5,6}' where title = 'renamed'$$, 'alice can record the courses a plan came from');
 select is((select "courseIds" from dogdays."userSavedPlans" where title = 'renamed'), '{5,6}'::integer[], 'the course ids were stored');
 
+-- Sharing: a plan is private until it has a shareId, and no two plans share one.
+select is((select count(*) from dogdays."userSavedPlans" where "shareId" is null),
+  2::bigint, 'two plans can both be unshared');
+select lives_ok($$update dogdays."userSavedPlans" set "shareId" = '33333333-3333-4333-8333-333333333333' where title = 'renamed'$$,
+  'alice can share her plan');
+select is((select "shareId" from dogdays."userSavedPlans" where title = 'renamed'),
+  '33333333-3333-4333-8333-333333333333'::uuid, 'the share id was stored');
+select throws_ok($$update dogdays."userSavedPlans" set "shareId" = '33333333-3333-4333-8333-333333333333' where title = 'merged'$$,
+  '23505', null, 'two plans cannot use the same share id');
+select lives_ok($$update dogdays."userSavedPlans" set "shareId" = null where title = 'renamed'$$,
+  'alice can stop sharing her plan');
+select is((select count(*) from dogdays."userSavedPlans" where title = 'renamed' and "shareId" is null),
+  1::bigint, 'the plan is private again');
+select lives_ok($$update dogdays."userSavedPlans" set "shareId" = '33333333-3333-4333-8333-333333333333' where title = 'renamed'$$,
+  'alice can share her plan again');
+
 -- Never legacyUserId: only the copy job writes it.
 select throws_ok($$insert into dogdays."userSavedPlans" ("userId", "legacyUserId", "academicPeriod", title, crns)
   values ('00000000-0000-4000-8000-0000000000a1', '22222222-2222-4222-8222-222222222222', 202608, 'squat', '{}')$$,
@@ -106,6 +122,13 @@ select is(public.rows_touched($$update dogdays."userSavedPlans" set title = 'hij
   0::bigint, 'bob cannot update alice''s plan');
 select is(public.rows_touched($$delete from dogdays."userSavedPlans"$$),
   0::bigint, 'bob cannot delete alice''s plan');
+select is((select count(*) from dogdays."userSavedPlans" where "shareId" = '33333333-3333-4333-8333-333333333333'),
+  0::bigint, 'bob cannot read alice''s plan by its share id');
+select is(public.rows_touched($$update dogdays."userSavedPlans" set "shareId" = null where "shareId" = '33333333-3333-4333-8333-333333333333'$$),
+  0::bigint, 'bob cannot unshare alice''s plan');
+select throws_ok($$insert into dogdays."userSavedPlans" ("userId", "academicPeriod", title, crns, "shareId")
+  values ('00000000-0000-4000-8000-0000000000b2', 202608, 'copycat', '{}', '33333333-3333-4333-8333-333333333333')$$,
+  '23505', null, 'bob cannot reuse alice''s share id');
 select is((select count(*) from dogdays."userPlanDraftCourses"), 0::bigint, 'bob cannot see alice''s draft courses');
 
 -- The claim function.
