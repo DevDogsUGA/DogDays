@@ -113,7 +113,7 @@ jobs:
       # and a rolled client secret is registered the same way.
       register_provider: false
       supabase_version: 2.117.0
-      shared_ref: 90437662e61e3f8f147e4fe69a00d33912e2e3aa
+      shared_ref: 64090e9dc6d34574d049e8cd00e0554e7798c218
 
   # What was deployed is what the schema says, and the API is safe to put in
   # front of students: it serves the dogdays schema, a signed-out request gets
@@ -177,7 +177,7 @@ jobs:
       self_approval_gate: true
       require_latest: true
       supabase_version: 2.117.0
-      shared_ref: 90437662e61e3f8f147e4fe69a00d33912e2e3aa
+      shared_ref: 64090e9dc6d34574d049e8cd00e0554e7798c218
 
   # The same checks as staging, against the production API, after the schema and
   # configuration are in. Catches a first deploy that left Supabase's defaults
@@ -277,7 +277,7 @@ jobs:
       !cancelled()
       && vars.DOGDAYS_WORKER_DEPLOY == 'true'
       && needs.staging-verify.result == 'success'
-    uses: DevDogsUGA/DevDogsUGA/.github/workflows/deploy-worker.yaml@90437662e61e3f8f147e4fe69a00d33912e2e3aa
+    uses: DevDogsUGA/DevDogsUGA/.github/workflows/deploy-worker.yaml@64090e9dc6d34574d049e8cd00e0554e7798c218
     secrets: inherit
     permissions:
       contents: read
@@ -298,7 +298,7 @@ jobs:
       prepare_command: bash .github/scripts/worker-build.sh
       upload_command: pnpm exec wrangler versions upload --message "$RELEASE" --var "SENTRY_RELEASE:$RELEASE" --var "SENTRY_DSN:$SENTRY_DSN"
       full_deploy_command: pnpm exec wrangler deploy --message "$RELEASE" --var "SENTRY_RELEASE:$RELEASE" --var "SENTRY_DSN:$SENTRY_DSN"
-      shared_ref: 90437662e61e3f8f147e4fe69a00d33912e2e3aa
+      shared_ref: 64090e9dc6d34574d049e8cd00e0554e7798c218
 
   production-worker:
     needs: [production-database, production-verify, production-copy]
@@ -307,7 +307,7 @@ jobs:
       && vars.DOGDAYS_DEPLOYS_PRODUCTION == 'true'
       && needs.production-verify.result == 'success'
       && (needs.production-copy.result == 'success' || needs.production-copy.result == 'skipped')
-    uses: DevDogsUGA/DevDogsUGA/.github/workflows/deploy-worker.yaml@90437662e61e3f8f147e4fe69a00d33912e2e3aa
+    uses: DevDogsUGA/DevDogsUGA/.github/workflows/deploy-worker.yaml@64090e9dc6d34574d049e8cd00e0554e7798c218
     secrets: inherit
     permissions:
       contents: read
@@ -330,4 +330,4 @@ jobs:
       full_deploy_command: pnpm exec wrangler deploy --message "$RELEASE" --var "SENTRY_RELEASE:$RELEASE" --var "SENTRY_DSN:$SENTRY_DSN"
       self_approval_gate: true
       require_latest: true
-      shared_ref: 90437662e61e3f8f147e4fe69a00d33912e2e3aa
+      shared_ref: 64090e9dc6d34574d049e8cd00e0554e7798c218
