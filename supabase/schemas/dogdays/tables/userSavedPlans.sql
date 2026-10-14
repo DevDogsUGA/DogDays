@@ -12,11 +12,13 @@ CREATE TABLE "dogdays"."userSavedPlans" (
   -- plans copied from the old app, which fall back to the term's draft.
   "courseIds"      integer[]   NOT NULL DEFAULT '{}'::integer[],
   "pinned"         boolean     NOT NULL DEFAULT false,
+  "shareId"        uuid,
   "createdAt"      timestamptz NOT NULL DEFAULT now(),
   "updatedAt"      timestamptz NOT NULL DEFAULT now(),
   CONSTRAINT "userSavedPlans_pkey" PRIMARY KEY ("id"),
   CONSTRAINT "userSavedPlans_userId_fkey" FOREIGN KEY ("userId") REFERENCES auth.users (id) ON DELETE CASCADE,
-  CONSTRAINT "userSavedPlans_owner_check" CHECK ("userId" IS NOT NULL OR "legacyUserId" IS NOT NULL)
+  CONSTRAINT "userSavedPlans_owner_check" CHECK ("userId" IS NOT NULL OR "legacyUserId" IS NOT NULL),
+  CONSTRAINT "userSavedPlans_shareId_key" UNIQUE ("shareId")
 );
 
 CREATE INDEX "userSavedPlans_userId_idx" ON "dogdays"."userSavedPlans" ("userId");
@@ -34,9 +36,9 @@ CREATE POLICY "users_own_plans" ON "dogdays"."userSavedPlans"
 GRANT SELECT ON TABLE "dogdays"."userSavedPlans" TO "authenticated";
 -- `id` is insertable so a signed-out visitor's local plans keep their ids when
 -- they sign in (the merge is then safe to run twice).
-GRANT INSERT ("id", "userId", "academicPeriod", "title", "crns", "courseIds", "pinned")
+GRANT INSERT ("id", "userId", "academicPeriod", "title", "crns", "courseIds", "pinned", "shareId")
   ON TABLE "dogdays"."userSavedPlans" TO "authenticated";
-GRANT UPDATE ("userId", "academicPeriod", "title", "crns", "courseIds", "pinned", "updatedAt")
+GRANT UPDATE ("userId", "academicPeriod", "title", "crns", "courseIds", "pinned", "shareId", "updatedAt")
   ON TABLE "dogdays"."userSavedPlans" TO "authenticated";
 GRANT DELETE ON TABLE "dogdays"."userSavedPlans" TO "authenticated";
 GRANT ALL ON TABLE "dogdays"."userSavedPlans" TO "service_role";
