@@ -33,3 +33,12 @@ from the GitHub environment's variables (`API_URL`, `PUBLISHABLE_KEY`,
 In-app branding is **DogDays** throughout (mark and copy from
 `@devdogsuga/sdk/brand`), with its own light/dark zinc-and-red design driven by
 system `prefers-color-scheme`, not the platform's design language.
+
+## Setting the environment's values
+
+Once DogDays' Bitwarden projects (`dogdays-preflight`, `dogdays-staging`,
+`dogdays-production`) are provisioned, set a GitHub environment's variables and
+secrets with `backstage env push --repo dogdays --target <target>` from a
+Backstage clone instead of `gh secret set`, and compare the file, Bitwarden and
+GitHub with `backstage env audit --repo dogdays --target <target>`. The file is
+`.env.<target>` in this checkout, which git ignores.
