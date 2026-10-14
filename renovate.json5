@@ -5,15 +5,4 @@
   // a weekend; patch and minor automerge through the merge queue; majors wait
   // for the officer.
   extends: ["github>DevDogsUGA/DevDogsUGA//renovate/default"],
-  // ROLLOUT SWITCH, the same as DevDogsUGA's: Renovate is turned on for this
-  // repository as a deliberate step, not by the commit that adds the preset.
-  // The preset's vulnerability alerts add their own rules after this one, so a
-  // vulnerable dependency still gets a pull request. To turn the preset on,
-  // delete this rule and this comment.
-  packageRules: [
-    {
-      matchPackageNames: ["*"],
-      enabled: false,
-    },
-  ],
 }
