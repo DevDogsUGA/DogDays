@@ -18,8 +18,8 @@ permissions:
   issues: read
 jobs:
   destructive-gate:
-    uses: DevDogsUGA/DevDogsUGA/.github/workflows/database-pr.yaml@90437662e61e3f8f147e4fe69a00d33912e2e3aa
+    uses: DevDogsUGA/DevDogsUGA/.github/workflows/database-pr.yaml@93c668bfb408edd2d48f442da2a46b36594da1cf
     with:
-      shared_ref: 90437662e61e3f8f147e4fe69a00d33912e2e3aa
+      shared_ref: 93c668bfb408edd2d48f442da2a46b36594da1cf
       # Keep equal to supabase.version in devtools.config.json.
       supabase_version: 2.117.0

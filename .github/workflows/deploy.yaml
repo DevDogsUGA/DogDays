@@ -7,8 +7,8 @@ name: Deploy
 #   staging      the database goes through the shared block on every push:
 #                hand-written migrations (none are committed), then the
 #                declarative diff of supabase/schemas, each hash-checked. A
-#                destructive plan needs `staging-destructive` approved by a
-#                devops member. Then a check that the deployed API serves the
+#                destructive plan is refused unless its pull request carried
+#                allow-destructive from a devops member. Then a check that the deployed API serves the
 #                schema and refuses the signed-out visitor.
 #
 #   production   OFF until the repository variable DOGDAYS_DEPLOYS_PRODUCTION is
@@ -22,8 +22,8 @@ name: Deploy
 #                          approval of `production` (devops, the author and the
 #                          person who queued it excluded), then the schema, the
 #                          config push and the DevDogs sign-in provider. A plan
-#                          that drops or rewrites data needs a second approval,
-#                          of `production-destructive`.
+#                          that drops or rewrites data is refused unless its
+#                          pull request approved it (allow-destructive).
 #     production-copy      the legacyUserId copy of the old DogDays data
 #                          (legacy-copy.sh), when DOGDAYS_LEGACY_COPY is `true`.
 #                          It runs once; the ledger in the database keeps a
@@ -38,6 +38,13 @@ name: Deploy
 #                preview beside, so it runs with DOGDAYS_WORKER_MODE=full; unset the
 #                variable afterwards. Both environments need a CLOUDFLARE_API_TOKEN
 #                secret (and, for source maps, SENTRY_AUTH_TOKEN).
+#
+# ONE APPROVAL (opt-in). With the repository variable ONE_APPROVAL set to `true`,
+# production asks for approval once: `production-plan` reads the database,
+# `production-approval` is the single pause (the reviewed `production-approval`
+# environment), and the database apply, the legacy copy and the Worker all run
+# in `production` after it, which then has no reviewers. Unset, every job asks as
+# before. DevDogsUGA's docs/operations/deploys/one-approval.md has the switch.
 #
 # Every approved production job refuses an approver who wrote or queued the
 # change, and a candidate that is no longer the head of main.
@@ -59,11 +66,12 @@ permissions:
   contents: read
   actions: read
   pull-requests: read
+  issues: read
 
 env:
   # One commit of DevDogsUGA for the shared blocks AND their scripts. Bump
   # both lines below (and database.yaml, destructive-gate.yaml) together.
-  SHARED_REF: 90437662e61e3f8f147e4fe69a00d33912e2e3aa
+  SHARED_REF: 93c668bfb408edd2d48f442da2a46b36594da1cf
 
 jobs:
   # Does this deploy push the Supabase configuration? On a push, only when
@@ -96,15 +104,15 @@ jobs:
 
   staging-database:
     needs: resolve
-    uses: DevDogsUGA/DevDogsUGA/.github/workflows/deploy-database.yaml@90437662e61e3f8f147e4fe69a00d33912e2e3aa
+    uses: DevDogsUGA/DevDogsUGA/.github/workflows/deploy-database.yaml@93c668bfb408edd2d48f442da2a46b36594da1cf
     secrets: inherit
     permissions:
       contents: read
       actions: read
       pull-requests: read
+      issues: read
     with:
       environment: staging
-      destructive_environment: staging-destructive
       apply_config: ${{ needs.resolve.outputs.config == 'true' }}
       # Staging holds no Supabase Management API token (an account-wide
       # credential must not sit in an environment without reviewers), so CI
@@ -113,7 +121,7 @@ jobs:
       # and a rolled client secret is registered the same way.
       register_provider: false
       supabase_version: 2.117.0
-      shared_ref: 7fea22133f42a6cf5b70b4ad55fd3e4177a4a40f
+      shared_ref: 93c668bfb408edd2d48f442da2a46b36594da1cf
 
   # What was deployed is what the schema says, and the API is safe to put in
   # front of students: it serves the dogdays schema, a signed-out request gets
@@ -155,18 +163,19 @@ jobs:
     if: >-
       !cancelled()
       && vars.DOGDAYS_DEPLOYS_PRODUCTION == 'true'
+      && vars.ONE_APPROVAL != 'true'
       && needs.production-catalog.result == 'success'
-    uses: DevDogsUGA/DevDogsUGA/.github/workflows/deploy-database.yaml@90437662e61e3f8f147e4fe69a00d33912e2e3aa
+    uses: DevDogsUGA/DevDogsUGA/.github/workflows/deploy-database.yaml@93c668bfb408edd2d48f442da2a46b36594da1cf
     secrets: inherit
     permissions:
       contents: read
       actions: read
       pull-requests: read
+      issues: read
     with:
       environment: production
       plan_environment: preflight
       require_read_only_planner: true
-      destructive_environment: production-destructive
       # The first production deploy always pushes the configuration and registers
       # the provider (email sign-up off, only `dogdays` served, DevDogs sign-in),
       # whatever the run's inputs say: until the repository variable
@@ -177,17 +186,85 @@ jobs:
       self_approval_gate: true
       require_latest: true
       supabase_version: 2.117.0
-      shared_ref: 7fea22133f42a6cf5b70b4ad55fd3e4177a4a40f
+      shared_ref: 93c668bfb408edd2d48f442da2a46b36594da1cf
+
+  # --- the one-approval flow (ONE_APPROVAL=true) ---
+  production-plan:
+    needs: [resolve, production-catalog]
+    if: >-
+      !cancelled()
+      && vars.DOGDAYS_DEPLOYS_PRODUCTION == 'true'
+      && vars.ONE_APPROVAL == 'true'
+      && needs.production-catalog.result == 'success'
+    uses: DevDogsUGA/DevDogsUGA/.github/workflows/plan-database.yaml@93c668bfb408edd2d48f442da2a46b36594da1cf
+    secrets: inherit
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: read
+      issues: read
+    with:
+      environment: production
+      plan_environment: preflight
+      supabase_version: 2.117.0
+      shared_ref: 93c668bfb408edd2d48f442da2a46b36594da1cf
+
+  production-approval:
+    needs: [resolve, production-plan]
+    if: >-
+      !cancelled()
+      && vars.ONE_APPROVAL == 'true'
+      && needs.production-plan.result == 'success'
+    uses: DevDogsUGA/DevDogsUGA/.github/workflows/approve-production.yaml@93c668bfb408edd2d48f442da2a46b36594da1cf
+    secrets: inherit
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: read
+    with:
+      approval_environment: production-approval
+      plan_environment_name: production
+      shared_ref: 93c668bfb408edd2d48f442da2a46b36594da1cf
+      notes: |
+        - Supabase configuration push and sign-in provider registration: ${{ (needs.resolve.outputs.config == 'true' || vars.DOGDAYS_PRODUCTION_CONFIGURED != 'true') && 'yes' || 'skipped (config.toml did not change)' }}
+        - Legacy data copy: ${{ vars.DOGDAYS_LEGACY_COPY == 'true' && 'yes (dry run, then for real)' || 'no' }}
+        - Worker `production-dogdays`: deploys (upload, preview smoke test, switch traffic, live smoke test)
+        - Order: schema and configuration, the verify, the legacy copy, then the Worker.
+
+  production-database-apply:
+    needs: [resolve, production-plan, production-approval]
+    if: >-
+      !cancelled()
+      && vars.ONE_APPROVAL == 'true'
+      && needs.production-approval.result == 'success'
+    uses: DevDogsUGA/DevDogsUGA/.github/workflows/apply-database.yaml@93c668bfb408edd2d48f442da2a46b36594da1cf
+    secrets: inherit
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: read
+      issues: read
+    with:
+      environment: production
+      approval_environment: production-approval
+      pending: ${{ needs.production-plan.outputs.pending }}
+      migrations_hash: ${{ needs.production-plan.outputs.migrations_hash }}
+      schema_hash: ${{ needs.production-plan.outputs.schema_hash }}
+      schema_empty: ${{ needs.production-plan.outputs.schema_empty }}
+      apply_config: ${{ needs.resolve.outputs.config == 'true' || vars.DOGDAYS_PRODUCTION_CONFIGURED != 'true' }}
+      register_provider: ${{ needs.resolve.outputs.config == 'true' || vars.DOGDAYS_PRODUCTION_CONFIGURED != 'true' }}
+      supabase_version: 2.117.0
+      shared_ref: 93c668bfb408edd2d48f442da2a46b36594da1cf
 
   # The same checks as staging, against the production API, after the schema and
   # configuration are in. Catches a first deploy that left Supabase's defaults
   # (public served, no provider) behind.
   production-verify:
-    needs: production-database
+    needs: [production-database, production-database-apply]
     if: >-
       !cancelled()
       && vars.DOGDAYS_DEPLOYS_PRODUCTION == 'true'
-      && needs.production-database.result == 'success'
+      && (needs.production-database.result == 'success' || needs.production-database-apply.result == 'success')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     # Read-only and public: no approval, and only the two public values and the site URL.
@@ -218,12 +295,12 @@ jobs:
   # an approved job on main can read it. Dry run first: the counts are in the
   # summary before anything is written.
   production-copy:
-    needs: production-database
+    needs: [production-database, production-database-apply]
     if: >-
       !cancelled()
       && vars.DOGDAYS_DEPLOYS_PRODUCTION == 'true'
       && vars.DOGDAYS_LEGACY_COPY == 'true'
-      && needs.production-database.result == 'success'
+      && (needs.production-database.result == 'success' || needs.production-database-apply.result == 'success')
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment: production
@@ -245,7 +322,7 @@ jobs:
         run: >-
           node .shared/.github/scripts/approval-gate.mjs
           --repo "$GITHUB_REPOSITORY" --run-id "$GITHUB_RUN_ID" --sha "$GITHUB_SHA"
-          --environment production
+          --environment "${{ vars.ONE_APPROVAL == 'true' && 'production-approval' || 'production' }}"
       - name: Refuse an approved candidate that is no longer the head
         env:
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch || 'main' }}
@@ -277,7 +354,7 @@ jobs:
       !cancelled()
       && vars.DOGDAYS_WORKER_DEPLOY == 'true'
       && needs.staging-verify.result == 'success'
-    uses: DevDogsUGA/DevDogsUGA/.github/workflows/deploy-worker.yaml@7fea22133f42a6cf5b70b4ad55fd3e4177a4a40f
+    uses: DevDogsUGA/DevDogsUGA/.github/workflows/deploy-worker.yaml@93c668bfb408edd2d48f442da2a46b36594da1cf
     secrets: inherit
     permissions:
       contents: read
@@ -298,16 +375,22 @@ jobs:
       prepare_command: bash .github/scripts/worker-build.sh
       upload_command: pnpm exec wrangler versions upload --message "$RELEASE" --var "SENTRY_RELEASE:$RELEASE" --var "SENTRY_DSN:$SENTRY_DSN"
       full_deploy_command: pnpm exec wrangler deploy --message "$RELEASE" --var "SENTRY_RELEASE:$RELEASE" --var "SENTRY_DSN:$SENTRY_DSN"
-      shared_ref: 7fea22133f42a6cf5b70b4ad55fd3e4177a4a40f
+      shared_ref: 93c668bfb408edd2d48f442da2a46b36594da1cf
 
   production-worker:
-    needs: [production-database, production-verify, production-copy]
+    needs:
+      [
+        production-database,
+        production-database-apply,
+        production-verify,
+        production-copy,
+      ]
     if: >-
       !cancelled()
       && vars.DOGDAYS_DEPLOYS_PRODUCTION == 'true'
       && needs.production-verify.result == 'success'
       && (needs.production-copy.result == 'success' || needs.production-copy.result == 'skipped')
-    uses: DevDogsUGA/DevDogsUGA/.github/workflows/deploy-worker.yaml@7fea22133f42a6cf5b70b4ad55fd3e4177a4a40f
+    uses: DevDogsUGA/DevDogsUGA/.github/workflows/deploy-worker.yaml@93c668bfb408edd2d48f442da2a46b36594da1cf
     secrets: inherit
     permissions:
       contents: read
@@ -318,6 +401,7 @@ jobs:
       use_wrangler_env: false
       worker_dir: .
       worker_name: production-dogdays
+      approval_environment: ${{ vars.ONE_APPROVAL == 'true' && 'production-approval' || '' }}
       smoke_path: dogdays
       workers_json: workers.json
       mode: ${{ vars.DOGDAYS_WORKER_MODE || 'versions' }}
@@ -330,4 +414,4 @@ jobs:
       full_deploy_command: pnpm exec wrangler deploy --message "$RELEASE" --var "SENTRY_RELEASE:$RELEASE" --var "SENTRY_DSN:$SENTRY_DSN"
       self_approval_gate: true
       require_latest: true
-      shared_ref: 7fea22133f42a6cf5b70b4ad55fd3e4177a4a40f
+      shared_ref: 93c668bfb408edd2d48f442da2a46b36594da1cf
