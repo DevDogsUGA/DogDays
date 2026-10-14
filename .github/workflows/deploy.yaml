@@ -71,7 +71,7 @@ permissions:
 env:
   # One commit of DevDogsUGA for the shared blocks AND their scripts. Bump
   # both lines below (and database.yaml, destructive-gate.yaml) together.
-  SHARED_REF: 93c668bfb408edd2d48f442da2a46b36594da1cf
+  SHARED_REF: 3f56416ec0cb8150361326fb03b99020bb22d44f
 
 jobs:
   # Does this deploy push the Supabase configuration? On a push, only when
@@ -104,7 +104,7 @@ jobs:
 
   staging-database:
     needs: resolve
-    uses: DevDogsUGA/DevDogsUGA/.github/workflows/deploy-database.yaml@93c668bfb408edd2d48f442da2a46b36594da1cf
+    uses: DevDogsUGA/DevDogsUGA/.github/workflows/deploy-database.yaml@3f56416ec0cb8150361326fb03b99020bb22d44f
     secrets: inherit
     permissions:
       contents: read
@@ -121,7 +121,7 @@ jobs:
       # and a rolled client secret is registered the same way.
       register_provider: false
       supabase_version: 2.117.0
-      shared_ref: 93c668bfb408edd2d48f442da2a46b36594da1cf
+      shared_ref: 3f56416ec0cb8150361326fb03b99020bb22d44f
 
   # What was deployed is what the schema says, and the API is safe to put in
   # front of students: it serves the dogdays schema, a signed-out request gets
@@ -165,7 +165,7 @@ jobs:
       && vars.DOGDAYS_DEPLOYS_PRODUCTION == 'true'
       && vars.ONE_APPROVAL != 'true'
       && needs.production-catalog.result == 'success'
-    uses: DevDogsUGA/DevDogsUGA/.github/workflows/deploy-database.yaml@93c668bfb408edd2d48f442da2a46b36594da1cf
+    uses: DevDogsUGA/DevDogsUGA/.github/workflows/deploy-database.yaml@3f56416ec0cb8150361326fb03b99020bb22d44f
     secrets: inherit
     permissions:
       contents: read
@@ -186,7 +186,7 @@ jobs:
       self_approval_gate: true
       require_latest: true
       supabase_version: 2.117.0
-      shared_ref: 93c668bfb408edd2d48f442da2a46b36594da1cf
+      shared_ref: 3f56416ec0cb8150361326fb03b99020bb22d44f
 
   # --- the one-approval flow (ONE_APPROVAL=true) ---
   production-plan:
@@ -196,7 +196,7 @@ jobs:
       && vars.DOGDAYS_DEPLOYS_PRODUCTION == 'true'
       && vars.ONE_APPROVAL == 'true'
       && needs.production-catalog.result == 'success'
-    uses: DevDogsUGA/DevDogsUGA/.github/workflows/plan-database.yaml@93c668bfb408edd2d48f442da2a46b36594da1cf
+    uses: DevDogsUGA/DevDogsUGA/.github/workflows/plan-database.yaml@3f56416ec0cb8150361326fb03b99020bb22d44f
     secrets: inherit
     permissions:
       contents: read
@@ -207,7 +207,7 @@ jobs:
       environment: production
       plan_environment: preflight
       supabase_version: 2.117.0
-      shared_ref: 93c668bfb408edd2d48f442da2a46b36594da1cf
+      shared_ref: 3f56416ec0cb8150361326fb03b99020bb22d44f
 
   production-approval:
     needs: [resolve, production-plan]
@@ -215,7 +215,7 @@ jobs:
       !cancelled()
       && vars.ONE_APPROVAL == 'true'
       && needs.production-plan.result == 'success'
-    uses: DevDogsUGA/DevDogsUGA/.github/workflows/approve-production.yaml@93c668bfb408edd2d48f442da2a46b36594da1cf
+    uses: DevDogsUGA/DevDogsUGA/.github/workflows/approve-production.yaml@3f56416ec0cb8150361326fb03b99020bb22d44f
     secrets: inherit
     permissions:
       contents: read
@@ -224,7 +224,7 @@ jobs:
     with:
       approval_environment: production-approval
       plan_environment_name: production
-      shared_ref: 93c668bfb408edd2d48f442da2a46b36594da1cf
+      shared_ref: 3f56416ec0cb8150361326fb03b99020bb22d44f
       notes: |
         - Supabase configuration push and sign-in provider registration: ${{ (needs.resolve.outputs.config == 'true' || vars.DOGDAYS_PRODUCTION_CONFIGURED != 'true') && 'yes' || 'skipped (config.toml did not change)' }}
         - Legacy data copy: ${{ vars.DOGDAYS_LEGACY_COPY == 'true' && 'yes (dry run, then for real)' || 'no' }}
@@ -237,7 +237,7 @@ jobs:
       !cancelled()
       && vars.ONE_APPROVAL == 'true'
       && needs.production-approval.result == 'success'
-    uses: DevDogsUGA/DevDogsUGA/.github/workflows/apply-database.yaml@93c668bfb408edd2d48f442da2a46b36594da1cf
+    uses: DevDogsUGA/DevDogsUGA/.github/workflows/apply-database.yaml@3f56416ec0cb8150361326fb03b99020bb22d44f
     secrets: inherit
     permissions:
       contents: read
@@ -254,7 +254,7 @@ jobs:
       apply_config: ${{ needs.resolve.outputs.config == 'true' || vars.DOGDAYS_PRODUCTION_CONFIGURED != 'true' }}
       register_provider: ${{ needs.resolve.outputs.config == 'true' || vars.DOGDAYS_PRODUCTION_CONFIGURED != 'true' }}
       supabase_version: 2.117.0
-      shared_ref: 93c668bfb408edd2d48f442da2a46b36594da1cf
+      shared_ref: 3f56416ec0cb8150361326fb03b99020bb22d44f
 
   # The same checks as staging, against the production API, after the schema and
   # configuration are in. Catches a first deploy that left Supabase's defaults
@@ -354,7 +354,7 @@ jobs:
       !cancelled()
       && vars.DOGDAYS_WORKER_DEPLOY == 'true'
       && needs.staging-verify.result == 'success'
-    uses: DevDogsUGA/DevDogsUGA/.github/workflows/deploy-worker.yaml@93c668bfb408edd2d48f442da2a46b36594da1cf
+    uses: DevDogsUGA/DevDogsUGA/.github/workflows/deploy-worker.yaml@3f56416ec0cb8150361326fb03b99020bb22d44f
     secrets: inherit
     permissions:
       contents: read
@@ -375,7 +375,7 @@ jobs:
       prepare_command: bash .github/scripts/worker-build.sh
       upload_command: pnpm exec wrangler versions upload --message "$RELEASE" --var "SENTRY_RELEASE:$RELEASE" --var "SENTRY_DSN:$SENTRY_DSN"
       full_deploy_command: pnpm exec wrangler deploy --message "$RELEASE" --var "SENTRY_RELEASE:$RELEASE" --var "SENTRY_DSN:$SENTRY_DSN"
-      shared_ref: 93c668bfb408edd2d48f442da2a46b36594da1cf
+      shared_ref: 3f56416ec0cb8150361326fb03b99020bb22d44f
 
   production-worker:
     needs:
@@ -390,7 +390,7 @@ jobs:
       && vars.DOGDAYS_DEPLOYS_PRODUCTION == 'true'
       && needs.production-verify.result == 'success'
       && (needs.production-copy.result == 'success' || needs.production-copy.result == 'skipped')
-    uses: DevDogsUGA/DevDogsUGA/.github/workflows/deploy-worker.yaml@93c668bfb408edd2d48f442da2a46b36594da1cf
+    uses: DevDogsUGA/DevDogsUGA/.github/workflows/deploy-worker.yaml@3f56416ec0cb8150361326fb03b99020bb22d44f
     secrets: inherit
     permissions:
       contents: read
@@ -414,4 +414,4 @@ jobs:
       full_deploy_command: pnpm exec wrangler deploy --message "$RELEASE" --var "SENTRY_RELEASE:$RELEASE" --var "SENTRY_DSN:$SENTRY_DSN"
       self_approval_gate: true
       require_latest: true
-      shared_ref: 93c668bfb408edd2d48f442da2a46b36594da1cf
+      shared_ref: 3f56416ec0cb8150361326fb03b99020bb22d44f
