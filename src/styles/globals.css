@@ -103,6 +103,49 @@
   }
 }
 
+/*
+ * Print: one landscape page, every day column, even when the on-screen
+ * viewport is phone-sized (one selected day + tablist). Class blocks stay
+ * percentage-offset from the time grid; we only shrink spacing so 8 AM and
+ * 10 PM are not clipped by the page.
+ */
+@media print {
+  @page {
+    size: landscape;
+    margin: 0.4in;
+  }
+
+  header,
+  footer,
+  nav {
+    display: none !important;
+  }
+
+  :has(.week-grid) {
+    overflow: visible !important;
+  }
+
+  .week-grid {
+    --hour-height: 0.36in;
+    width: 100%;
+    grid-template-columns: 2.5rem repeat(var(--day-count, 5), minmax(0, 1fr));
+    column-gap: 0.2rem;
+    font-size: 0.65rem;
+    overflow: visible;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .week-grid > * > .relative {
+    margin-bottom: 0.45rem;
+  }
+
+  .week-grid h2 {
+    height: 1.35rem;
+    font-size: 0.7rem;
+  }
+}
+
 .shadow-inner-scroll-y {
   background:
     /* Shadow covers */

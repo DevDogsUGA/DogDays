@@ -1,9 +1,9 @@
 "use client";
 
 import { type CSSProperties, useState } from "react";
+import { SCHEDULE_END_HOUR, SCHEDULE_START_HOUR } from "~/lib/schedule-display";
 import { type WeekSchedule as WeekScheduleType } from "~/types/scheduleTypes";
 import DayClass from "./DayClass";
-import { SCHEDULE_END_HOUR, SCHEDULE_START_HOUR } from "~/lib/schedule-display";
 
 interface WeekScheduleProps {
   weekData: WeekScheduleType;
@@ -42,7 +42,10 @@ export default function WeekSchedule({ weekData }: WeekScheduleProps) {
 
   return (
     <div className="flex w-full flex-col gap-3 p-3 sm:p-4">
-      <div role="tablist" className="flex gap-1.5 overflow-x-auto md:hidden">
+      <div
+        role="tablist"
+        className="flex gap-1.5 overflow-x-auto md:hidden print:hidden"
+      >
         {days.map((day) => (
           <button
             key={day}
@@ -81,7 +84,7 @@ export default function WeekSchedule({ weekData }: WeekScheduleProps) {
           <div
             key={day}
             data-title={day}
-            className={`${day === activeDay ? "flex" : "hidden md:flex"} min-w-0 flex-col`}
+            className={`${day === activeDay ? "flex" : "hidden md:flex"} min-w-0 flex-col print:flex`}
           >
             <h2 className="bg-navy text-navy-foreground flex h-9 shrink-0 items-center justify-center rounded-md text-sm font-semibold">
               {day}
