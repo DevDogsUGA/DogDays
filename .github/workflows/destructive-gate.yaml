@@ -5,6 +5,11 @@ name: Destructive gate
 # check out or run the pull request's code: the shared workflow takes its
 # script from the base branch and the pinned DevDogsUGA commit and reads nothing
 # but the pull request number. Do not add steps to this file.
+#
+# The job is `destructive-label`, not `destructive-gate`: the required
+# `destructive-gate / destructive-gate` comes from database.yaml alone, and a
+# second result under that name on the same commit could satisfy the ruleset
+# in its place.
 on:
   pull_request_target:
     types: [opened, reopened, synchronize, labeled, unlabeled]
@@ -13,7 +18,7 @@ permissions:
   pull-requests: write
   issues: write
 jobs:
-  destructive-gate:
-    uses: DevDogsUGA/DevDogsUGA/.github/workflows/destructive-gate.yaml@65a9377309e8bab39761d4d7d6756729c9e9de02
+  destructive-label:
+    uses: DevDogsUGA/DevDogsUGA/.github/workflows/destructive-gate.yaml@9ec22463ce5f5a6be864a4ee957522daac5f8e3c
     with:
-      shared_ref: 65a9377309e8bab39761d4d7d6756729c9e9de02
+      shared_ref: 9ec22463ce5f5a6be864a4ee957522daac5f8e3c

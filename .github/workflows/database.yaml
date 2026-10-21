@@ -3,9 +3,9 @@ name: Database
 # The destructive gate's pull request half: plans the SQL this change runs,
 # shows it in the job summary, and fails a change that drops or rewrites data
 # unless a DevOps member applied the allow-destructive label. The job is named
-# `destructive-gate` so the check reports as `destructive-gate / destructive-sql`
-# (and, on the merge queue, `destructive-gate / destructive-gate`), the names the
-# main-ci ruleset requires. See DevDogsUGA's docs/operations/repositories/product-ci.md.
+# `destructive-gate` so the checks report as `destructive-gate / destructive-sql`
+# and `destructive-gate / destructive-gate` (who applied the label), the names
+# the main-ci ruleset requires. See DevDogsUGA's docs/operations/repositories/product-ci.md.
 #
 # Pin the `uses:` line and `shared_ref` to the same DevDogsUGA commit.
 on:
@@ -18,8 +18,8 @@ permissions:
   issues: read
 jobs:
   destructive-gate:
-    uses: DevDogsUGA/DevDogsUGA/.github/workflows/database-pr.yaml@65a9377309e8bab39761d4d7d6756729c9e9de02
+    uses: DevDogsUGA/DevDogsUGA/.github/workflows/database-pr.yaml@9ec22463ce5f5a6be864a4ee957522daac5f8e3c
     with:
-      shared_ref: 65a9377309e8bab39761d4d7d6756729c9e9de02
+      shared_ref: 9ec22463ce5f5a6be864a4ee957522daac5f8e3c
       # Keep equal to supabase.version in devtools.config.json.
       supabase_version: 2.117.0
