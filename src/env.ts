@@ -6,7 +6,9 @@
  * `.env`. Nothing here is a secret. The app has no server secret at all: the
  * catalog is public and keyless, and the member's own data goes through
  * Supabase with the member's own session, so Row Level Security is the only
- * gate.
+ * gate. The one exception is the moderation receiver, which runs with the
+ * service role: its two secrets are read at request time by `serverSecrets()`
+ * below and nowhere else.
  *
  * `NEXT_PUBLIC_*` values are inlined into the browser bundle by STATIC
  * analysis, so each one below is read as the literal text
@@ -74,3 +76,32 @@ export const env = {
 };
 
 export type Env = typeof env;
+
+/**
+ * The moderation receiver's secrets (`src/app/(api)/platform-moderation`),
+ * Worker secrets set by the deploy (`.github/scripts/worker-build.sh` writes
+ * them from the GitHub environment's secrets). Read per request, never at
+ * module scope: a secret is not there while the app builds, and a missing one
+ * must answer 503 rather than break every page.
+ *
+ * - `PLATFORM_MODERATION_SECRET`: the `whsec_...` signing secret of DogDays'
+ *   OAuth client, shown once when an officer registers it as an external app.
+ *   Comma separated while a rotation is in flight.
+ * - `SUPABASE_SERVICE_ROLE_KEY`: this project's service-role key, for the
+ *   moderation function and the admin API's user delete.
+ *
+ * Locally, put them in `.env.local` (git ignores it). Without them the route
+ * answers 503 and the rest of the app is unaffected.
+ */
+export function serverSecrets(): {
+  moderationSecrets: string[];
+  serviceRoleKey: string | undefined;
+} {
+  return {
+    moderationSecrets: (process.env.PLATFORM_MODERATION_SECRET ?? "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean),
+    serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY?.trim() || undefined,
+  };
+}
