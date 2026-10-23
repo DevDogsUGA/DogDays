@@ -1,5 +1,5 @@
 import { signMessage, generateSecret } from "@devdogsuga/sdk/moderation";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi, type Mock } from "vitest";
 import { receiveModeration, type ReceiverDeps } from "./receive";
 
 const secret = generateSecret();
@@ -38,13 +38,15 @@ async function delivery(
 }
 
 let deps: ReceiverDeps;
-let apply: ReturnType<typeof vi.fn>;
-let deleteUser: ReturnType<typeof vi.fn>;
+let apply: Mock<ReceiverDeps["apply"]>;
+let deleteUser: Mock<ReceiverDeps["deleteUser"]>;
 
 beforeEach(() => {
-  vi.spyOn(console, "error").mockImplementation(() => {});
-  apply = vi.fn().mockResolvedValue({ outcome: "applied", userId: LOCAL_USER });
-  deleteUser = vi.fn().mockResolvedValue(undefined);
+  vi.spyOn(console, "error").mockImplementation(() => undefined);
+  apply = vi
+    .fn<ReceiverDeps["apply"]>()
+    .mockResolvedValue({ outcome: "applied", userId: LOCAL_USER });
+  deleteUser = vi.fn<ReceiverDeps["deleteUser"]>().mockResolvedValue();
   deps = { secrets: [secret], apply, deleteUser };
 });
 

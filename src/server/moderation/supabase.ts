@@ -23,12 +23,12 @@ export function supabaseReceiverDeps(
   });
   return {
     async apply(id, body): Promise<ApplyOutcome> {
-      const { data, error } = await client.rpc("apply_moderation_event", {
+      const result = await client.rpc("apply_moderation_event", {
         p_id: id,
         p_message: JSON.parse(body) as unknown,
       });
-      if (error) throw error;
-      return outcomeSchema.parse(data);
+      if (result.error) throw result.error;
+      return outcomeSchema.parse(result.data);
     },
     async deleteUser(userId) {
       const { error } = await client.auth.admin.deleteUser(userId);

@@ -48,7 +48,9 @@ describe("supabaseReceiverDeps", () => {
   });
 
   it("throws any other admin API error", async () => {
-    deleteUser.mockResolvedValue({ error: { status: 500, code: "unexpected" } });
+    deleteUser.mockResolvedValue({
+      error: { status: 500, code: "unexpected" },
+    });
     await expect(supabaseReceiverDeps("key").deleteUser(USER)).rejects.toEqual({
       status: 500,
       code: "unexpected",

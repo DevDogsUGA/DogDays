@@ -97,11 +97,12 @@ export function serverSecrets(): {
   moderationSecrets: string[];
   serviceRoleKey: string | undefined;
 } {
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
   return {
     moderationSecrets: (process.env.PLATFORM_MODERATION_SECRET ?? "")
       .split(",")
-      .map((s) => s.trim())
+      .map((s: string) => s.trim())
       .filter(Boolean),
-    serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY?.trim() || undefined,
+    serviceRoleKey: key === "" ? undefined : key,
   };
 }
