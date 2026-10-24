@@ -7,7 +7,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(34);
+select plan(35);
 
 \set alice '''00000000-0000-4000-8000-0000000000a1'''
 \set bob   '''00000000-0000-4000-8000-0000000000b2'''
@@ -121,6 +121,7 @@ select is(
   (dogdays.apply_moderation_event('msg_7', '{"type":"user.delete","timestamp":"2027-01-01T08:00:00Z","data":{"userId":"aaaaaaaa-0000-4000-8000-000000000002","reason":null,"reportId":null}}'::jsonb))->>'outcome',
   'stale', 'a user.delete older than the last decision is stale');
 select is((select count(*)::int from dogdays."userSavedPlans" where "legacyUserId" = :bob_platform), 0, 'but it still deletes what is keyed by the platform id');
+select is((select "state" from moderation.user_states where "platformUserId" = :bob_platform), 'deleted', 'and leaves the deleted tombstone');
 
 select * from finish();
 rollback;

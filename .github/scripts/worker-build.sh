@@ -6,7 +6,7 @@
 # The browser values (NEXT_PUBLIC_*) are inlined into the bundle at build time,
 # which is why they are read here and not at runtime. Nothing in them is a
 # secret. The moderation receiver's two secrets (PLATFORM_MODERATION_SECRET and
-# SERVICE_ROLE_KEY, secrets of the GitHub environment) come from
+# SECRET_KEY, secrets of the GitHub environment) come from
 # DEPLOY_GITHUB_SECRETS and leave in a 0600 file that the upload commands hand
 # to wrangler's --secrets-file, so they become Worker secrets, not plain vars.
 #
@@ -51,15 +51,15 @@ fi
 secrets=${DEPLOY_GITHUB_SECRETS:-}
 [ -n "$secrets" ] || secrets='{}'
 moderation_secret=$(jq -r '.PLATFORM_MODERATION_SECRET // empty' <<<"$secrets")
-service_role_key=$(jq -r '.SERVICE_ROLE_KEY // empty' <<<"$secrets")
-if [ -n "$moderation_secret" ] && [ -n "$service_role_key" ] && [ -n "${GITHUB_ENV:-}" ]; then
+secret_key=$(jq -r '.SECRET_KEY // empty' <<<"$secrets")
+if [ -n "$moderation_secret" ] && [ -n "$secret_key" ] && [ -n "${GITHUB_ENV:-}" ]; then
   file="${RUNNER_TEMP:-/tmp}/worker-secrets.json"
   (
     umask 077
-    jq -n --arg m "$moderation_secret" --arg k "$service_role_key" \
-      '{PLATFORM_MODERATION_SECRET: $m, SUPABASE_SERVICE_ROLE_KEY: $k}' >"$file"
+    jq -n --arg m "$moderation_secret" --arg k "$secret_key" \
+      '{PLATFORM_MODERATION_SECRET: $m, SUPABASE_SECRET_KEY: $k}' >"$file"
   )
   echo "WORKER_SECRETS_FILE=$file" >>"$GITHUB_ENV"
 else
-  echo "::notice::The $tier environment has no PLATFORM_MODERATION_SECRET and SERVICE_ROLE_KEY secrets: the moderation receiver answers 503 until it does."
+  echo "::notice::The $tier environment has no PLATFORM_MODERATION_SECRET and SECRET_KEY secrets: the moderation receiver answers 503 until it does."
 fi

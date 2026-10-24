@@ -34,10 +34,10 @@ from the GitHub environment's variables (`API_URL`, `PUBLISHABLE_KEY`,
 
 `/platform-moderation` ([how it works](../guides/moderation.md)) needs two
 Worker secrets. They are secrets of the `staging` and `production` GitHub
-environments, `PLATFORM_MODERATION_SECRET` and `SERVICE_ROLE_KEY`. The deploy
+environments, `PLATFORM_MODERATION_SECRET` and `SECRET_KEY`. The deploy
 (`.github/scripts/worker-build.sh`) writes them to a file that
 `wrangler ... --secrets-file` uploads as the Worker's
-`PLATFORM_MODERATION_SECRET` and `SUPABASE_SERVICE_ROLE_KEY`. Without both the
+`PLATFORM_MODERATION_SECRET` and `SUPABASE_SECRET_KEY`. Without both the
 route answers 503 and nothing else changes. Never set them on the Worker
 directly: the next deploy would not remove them, but a rotated value in GitHub
 would silently lose to a stale one.

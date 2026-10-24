@@ -97,6 +97,14 @@ begin
   perform pg_advisory_xact_lock(hashtextextended(v_key, 0));
   select d."decidedAt" into v_last from moderation.decisions d where d."itemKey" = v_key for update;
   if found and v_decided < v_last then
+    -- Deletion is final: even a stale user.delete leaves the 'deleted'
+    -- tombstone, so a replay can't apply an older decision to a new account.
+    if v_type = 'user.delete' then
+      insert into moderation.user_states ("platformUserId", "state", "reason", "decidedAt")
+      values (v_platform_user, 'deleted', null, v_decided)
+      on conflict ("platformUserId") do update
+        set "state" = 'deleted', "reason" = null;
+    end if;
     update moderation.events e set "outcome" = 'stale' where e."id" = p_id;
     return jsonb_build_object('outcome', 'stale', 'userId', v_user);
   end if;

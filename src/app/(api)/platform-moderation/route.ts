@@ -12,7 +12,7 @@ import { supabaseReceiverDeps } from "~/server/moderation/supabase";
 export async function POST(request: Request) {
   const { moderationSecrets, serviceRoleKey } = serverSecrets();
   if (!serviceRoleKey) {
-    console.error("SUPABASE_SERVICE_ROLE_KEY is not set");
+    console.error("SUPABASE_SECRET_KEY is not set");
     return Response.json(
       { status: 503, error: "not_configured" },
       { status: 503 },

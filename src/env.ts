@@ -87,7 +87,7 @@ export type Env = typeof env;
  * - `PLATFORM_MODERATION_SECRET`: the `whsec_...` signing secret of DogDays'
  *   OAuth client, shown once when an officer registers it as an external app.
  *   Comma separated while a rotation is in flight.
- * - `SUPABASE_SERVICE_ROLE_KEY`: this project's service-role key, for the
+ * - `SUPABASE_SECRET_KEY`: this project's secret key (`sb_secret_...`), for the
  *   moderation function and the admin API's user delete.
  *
  * Locally, put them in `.env.local` (git ignores it). Without them the route
@@ -97,7 +97,7 @@ export function serverSecrets(): {
   moderationSecrets: string[];
   serviceRoleKey: string | undefined;
 } {
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
+  const key = process.env.SUPABASE_SECRET_KEY?.trim();
   return {
     moderationSecrets: (process.env.PLATFORM_MODERATION_SECRET ?? "")
       .split(",")
