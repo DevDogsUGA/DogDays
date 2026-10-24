@@ -382,8 +382,8 @@ jobs:
       setup_workspace: false
       setup_command: bash .github/scripts/worker-setup.sh
       prepare_command: bash .github/scripts/worker-build.sh
-      upload_command: pnpm exec wrangler versions upload --message "$RELEASE" --var "SENTRY_RELEASE:$RELEASE" --var "SENTRY_DSN:$SENTRY_DSN"
-      full_deploy_command: pnpm exec wrangler deploy --message "$RELEASE" --var "SENTRY_RELEASE:$RELEASE" --var "SENTRY_DSN:$SENTRY_DSN"
+      upload_command: pnpm exec wrangler versions upload --message "$RELEASE" --var "SENTRY_RELEASE:$RELEASE" --var "SENTRY_DSN:$SENTRY_DSN" ${WORKER_SECRETS_FILE:+--secrets-file "$WORKER_SECRETS_FILE"}
+      full_deploy_command: pnpm exec wrangler deploy --message "$RELEASE" --var "SENTRY_RELEASE:$RELEASE" --var "SENTRY_DSN:$SENTRY_DSN" ${WORKER_SECRETS_FILE:+--secrets-file "$WORKER_SECRETS_FILE"}
       shared_ref: 9ec22463ce5f5a6be864a4ee957522daac5f8e3c
 
   production-worker:
@@ -419,8 +419,8 @@ jobs:
       setup_workspace: false
       setup_command: bash .github/scripts/worker-setup.sh
       prepare_command: bash .github/scripts/worker-build.sh
-      upload_command: pnpm exec wrangler versions upload --message "$RELEASE" --var "SENTRY_RELEASE:$RELEASE" --var "SENTRY_DSN:$SENTRY_DSN"
-      full_deploy_command: pnpm exec wrangler deploy --message "$RELEASE" --var "SENTRY_RELEASE:$RELEASE" --var "SENTRY_DSN:$SENTRY_DSN"
+      upload_command: pnpm exec wrangler versions upload --message "$RELEASE" --var "SENTRY_RELEASE:$RELEASE" --var "SENTRY_DSN:$SENTRY_DSN" ${WORKER_SECRETS_FILE:+--secrets-file "$WORKER_SECRETS_FILE"}
+      full_deploy_command: pnpm exec wrangler deploy --message "$RELEASE" --var "SENTRY_RELEASE:$RELEASE" --var "SENTRY_DSN:$SENTRY_DSN" ${WORKER_SECRETS_FILE:+--secrets-file "$WORKER_SECRETS_FILE"}
       self_approval_gate: true
       require_latest: true
       shared_ref: 9ec22463ce5f5a6be864a4ee957522daac5f8e3c
