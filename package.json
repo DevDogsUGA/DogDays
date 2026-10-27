@@ -71,7 +71,7 @@
     "@vitejs/plugin-react": "^6.1.0",
     "@vitejs/plugin-rsc": "^0.5.35",
     "@vitest/coverage-v8": "^4.1.11",
-    "eslint": "^9.39.5",
+    "eslint": "^10.0.0",
     "jsdom": "^29.1.1",
     "postcss": "^8.5.26",
     "prettier": "3.9.6",
