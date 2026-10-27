@@ -21,6 +21,7 @@ database (their drafts and plans stay in the browser).
 | `userPlanDraftCourses` | the courses in a draft, by catalog `courseId`, and the CRNs excluded |
 | `userSavedPlans` | a saved schedule: its CRNs, the `courseIds` it came from, a title, pinned |
 | `legacyImports` | which old-app copies have run (service role only) |
+| `moderation.events`, `.decisions`, `.user_states` | what the [moderation receiver](./moderation.md) has applied (service role only, not served by the API) |
 
 `legacyUserId` columns and `claim_legacy_data()` are how a member's plans from
 the old app (the shared DevDogs database) reach their account: the one-time copy
