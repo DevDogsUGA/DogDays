@@ -15,8 +15,8 @@ importers:
   .:
     dependencies:
       '@devdogsuga/sdk':
-        specifier: 0.0.1-next.526
-        version: 0.0.1-next.526(@opentelemetry/api@1.9.1)(next@16.3.8(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(react-dom@19.3.0(patch_hash=0bbbf983447e94bb14f88b6f2ccfbd7ddf32790e6b3d94c2fb5f5ad0d8e0fd26)(react@19.3.0(patch_hash=a6aa41c6f55e4a40ba1c3e3ff0022820cb78c1413bb5d05f953a345f6de78a1c)))(react@19.3.0(patch_hash=a6aa41c6f55e4a40ba1c3e3ff0022820cb78c1413bb5d05f953a345f6de78a1c)))(react@19.3.0(patch_hash=a6aa41c6f55e4a40ba1c3e3ff0022820cb78c1413bb5d05f953a345f6de78a1c))(satori@0.33.5)(sharp@0.35.5(@types/node@26.6.5))(typescript@6.0.3)
+        specifier: 0.0.1-next.885
+        version: 0.0.1-next.885(@opentelemetry/api@1.9.1)(next@16.3.8(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(react-dom@19.3.0(patch_hash=0bbbf983447e94bb14f88b6f2ccfbd7ddf32790e6b3d94c2fb5f5ad0d8e0fd26)(react@19.3.0(patch_hash=a6aa41c6f55e4a40ba1c3e3ff0022820cb78c1413bb5d05f953a345f6de78a1c)))(react@19.3.0(patch_hash=a6aa41c6f55e4a40ba1c3e3ff0022820cb78c1413bb5d05f953a345f6de78a1c)))(react@19.3.0(patch_hash=a6aa41c6f55e4a40ba1c3e3ff0022820cb78c1413bb5d05f953a345f6de78a1c))(satori@0.33.5)(sharp@0.35.5(@types/node@26.6.5))(typescript@6.0.3)
       '@phosphor-icons/react':
         specifier: ^2.1.10
         version: 2.1.10(react-dom@19.3.0(patch_hash=0bbbf983447e94bb14f88b6f2ccfbd7ddf32790e6b3d94c2fb5f5ad0d8e0fd26)(react@19.3.0(patch_hash=a6aa41c6f55e4a40ba1c3e3ff0022820cb78c1413bb5d05f953a345f6de78a1c)))(react@19.3.0(patch_hash=a6aa41c6f55e4a40ba1c3e3ff0022820cb78c1413bb5d05f953a345f6de78a1c))
@@ -103,8 +103,8 @@ importers:
         specifier: ^5.20260820.1
         version: 5.20261011.1
       '@devdogsuga/config':
-        specifier: 0.1.4-next.526
-        version: 0.1.4-next.526(@testing-library/dom@10.4.2)(@typescript-eslint/parser@8.71.1(eslint@9.39.5(jiti@2.7.0))(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0))(typescript@6.0.3)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15))(vitest@4.1.11)
+        specifier: 0.1.4
+        version: 0.1.4(@testing-library/dom@10.4.2)(@typescript-eslint/parser@8.71.1(eslint@9.39.5(jiti@2.7.0))(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0))(typescript@6.0.3)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15))(vitest@4.1.11)
       '@testing-library/jest-dom':
         specifier: ^7.0.1
         version: 7.0.1(@testing-library/dom@10.4.2)(vitest@4.1.11)
@@ -371,13 +371,13 @@ packages:
     resolution: {integrity: sha512-OoKoR0f76dCY666JlcbhmVTs2drYj1GUXZTYTcbUgJjh9Nv41aFfZ21bPQTERm5+L5cBDo466NltB2lplS5GBw==}
     engines: {node: '>=20.19.0'}
 
-  '@devdogsuga/config@0.1.4-next.526':
-    resolution: {integrity: sha512-alWYMm71Og/fwTJ9V8H4T2nirBHByei7s/seHxx6on820HyVMgKhPtSwxcvf72YhsIj4rm1rZLHlz4oEietQQQ==}
+  '@devdogsuga/config@0.1.4':
+    resolution: {integrity: sha512-I+YnoOz8Im8GG+X74fQpkAwYuewQB1ORzdzBaxtS6xJWp7B0T30nsz6fnPf+NPtGgzNu+EzYCzYqfa/EJbpFag==}
     peerDependencies:
       eslint: ^9.39.0
 
-  '@devdogsuga/sdk@0.0.1-next.526':
-    resolution: {integrity: sha512-Jy0rRWsn13OdVXNMRVhrK136UfjE5fgD0yaBiyu6ndO+16mvWLSt4RTBJBCXAEcjx3qRQOPmA2emMfCHNpUpSQ==}
+  '@devdogsuga/sdk@0.0.1-next.885':
+    resolution: {integrity: sha512-jieDi0aH1RyFLQOUFfhdxGZkwum9n7qvPmn5PAYmnkp9+Mw8crjGtVXRzKury+sRzbPlGt3I4t8hF9A5ryBCMw==}
     peerDependencies:
       '@resvg/resvg-js': ^2.6.2
       drizzle-orm: 1.0.0-rc.4
@@ -972,6 +972,7 @@ packages:
   '@opentelemetry/sdk-trace-base@2.12.0':
     resolution: {integrity: sha512-JOERgZCxRM06FEJ5kEWxlSRChah6MmXDx3KwCruqEv/iEyLkTokCSemf2y1w8oIHtfrr8EVTpzebq/31vn2Cpg==}
     engines: {node: ^18.19.0 || >=20.6.0}
+    deprecated: Use @opentelemetry/sdk-trace package
     peerDependencies:
       '@opentelemetry/api': '>=1.3.0 <1.10.0'
 
@@ -5128,7 +5129,7 @@ snapshots:
 
   '@csstools/css-tokenizer@4.0.2': {}
 
-  '@devdogsuga/config@0.1.4-next.526(@testing-library/dom@10.4.2)(@typescript-eslint/parser@8.71.1(eslint@9.39.5(jiti@2.7.0))(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0))(typescript@6.0.3)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15))(vitest@4.1.11)':
+  '@devdogsuga/config@0.1.4(@testing-library/dom@10.4.2)(@typescript-eslint/parser@8.71.1(eslint@9.39.5(jiti@2.7.0))(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0))(typescript@6.0.3)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15))(vitest@4.1.11)':
     dependencies:
       '@testing-library/jest-dom': 7.0.1(@testing-library/dom@10.4.2)(vitest@4.1.11)
       '@vitejs/plugin-react': 6.1.2(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15))
@@ -5149,7 +5150,7 @@ snapshots:
       - vite
       - vitest
 
-  '@devdogsuga/sdk@0.0.1-next.526(@opentelemetry/api@1.9.1)(next@16.3.8(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(react-dom@19.3.0(patch_hash=0bbbf983447e94bb14f88b6f2ccfbd7ddf32790e6b3d94c2fb5f5ad0d8e0fd26)(react@19.3.0(patch_hash=a6aa41c6f55e4a40ba1c3e3ff0022820cb78c1413bb5d05f953a345f6de78a1c)))(react@19.3.0(patch_hash=a6aa41c6f55e4a40ba1c3e3ff0022820cb78c1413bb5d05f953a345f6de78a1c)))(react@19.3.0(patch_hash=a6aa41c6f55e4a40ba1c3e3ff0022820cb78c1413bb5d05f953a345f6de78a1c))(satori@0.33.5)(sharp@0.35.5(@types/node@26.6.5))(typescript@6.0.3)':
+  '@devdogsuga/sdk@0.0.1-next.885(@opentelemetry/api@1.9.1)(next@16.3.8(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@types/node@26.6.5)(react-dom@19.3.0(patch_hash=0bbbf983447e94bb14f88b6f2ccfbd7ddf32790e6b3d94c2fb5f5ad0d8e0fd26)(react@19.3.0(patch_hash=a6aa41c6f55e4a40ba1c3e3ff0022820cb78c1413bb5d05f953a345f6de78a1c)))(react@19.3.0(patch_hash=a6aa41c6f55e4a40ba1c3e3ff0022820cb78c1413bb5d05f953a345f6de78a1c)))(react@19.3.0(patch_hash=a6aa41c6f55e4a40ba1c3e3ff0022820cb78c1413bb5d05f953a345f6de78a1c))(satori@0.33.5)(sharp@0.35.5(@types/node@26.6.5))(typescript@6.0.3)':
     dependencies:
       '@sentry/core': 10.75.1
       '@supabase/ssr': 0.12.7(@supabase/supabase-js@2.117.3(@opentelemetry/api@1.9.1))
