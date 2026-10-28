@@ -30,7 +30,7 @@
     "types:cf:check": "wrangler types cloudflare-env.d.ts --env production --env-interface CloudflareEnv --check"
   },
   "dependencies": {
-    "@devdogsuga/sdk": "0.0.1-next.526",
+    "@devdogsuga/sdk": "0.0.1-next.885",
     "@phosphor-icons/react": "^2.1.10",
     "@radix-ui/react-accordion": "^1.2.20",
     "@radix-ui/react-avatar": "^1.2.6",
@@ -61,7 +61,7 @@
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.57.1",
     "@cloudflare/workers-types": "^5.20260820.1",
-    "@devdogsuga/config": "0.1.4-next.526",
+    "@devdogsuga/config": "0.1.4",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.5",

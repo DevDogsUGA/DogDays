@@ -8,7 +8,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@devdogsuga/sdk": "0.0.1-next.526",
+    "@devdogsuga/sdk": "0.0.1-next.885",
     "zod": "^4.1.0"
   },
   "devDependencies": {
