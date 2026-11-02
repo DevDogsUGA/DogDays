@@ -28,7 +28,19 @@ The browser values (`NEXT_PUBLIC_*`) are inlined **at build time**, so they come
 from the GitHub environment's variables (`API_URL`, `PUBLISHABLE_KEY`,
 `CATALOG_URL`), not from the Worker. The Worker itself only needs `DEPLOY_ENV`
 (from `wrangler.jsonc`) and, when Sentry is on, `SENTRY_DSN` and
-`SENTRY_RELEASE`. The app has no secret.
+`SENTRY_RELEASE`. The only secrets are the moderation receiver's, below.
+
+## The moderation receiver's secrets
+
+`/platform-moderation` ([how it works](../guides/moderation.md)) needs two
+Worker secrets. They are secrets of the `staging` and `production` GitHub
+environments, `PLATFORM_MODERATION_SECRET` and `SECRET_KEY`. The deploy
+(`.github/scripts/worker-build.sh`) writes them to a file that
+`wrangler ... --secrets-file` uploads as the Worker's
+`PLATFORM_MODERATION_SECRET` and `SUPABASE_SECRET_KEY`. Without both the
+route answers 503 and nothing else changes. Never set them on the Worker
+directly: the next deploy would not remove them, but a rotated value in GitHub
+would silently lose to a stale one.
 
 In-app branding is **DogDays** throughout (mark and copy from
 `@devdogsuga/sdk/brand`), with its own light/dark zinc-and-red design driven by
