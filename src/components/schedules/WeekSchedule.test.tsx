@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import WeekSchedule from "./WeekSchedule";
 import type { WeekSchedule as WeekScheduleType } from "~/types/scheduleTypes";
+import WeekSchedule from "./WeekSchedule";
 
 afterEach(() => cleanup());
 
@@ -76,5 +76,26 @@ describe("WeekSchedule", () => {
     );
     expect(columnFor("Saturday").className).not.toContain("hidden");
     expect(columnFor("Monday").className).toContain("hidden");
+  });
+
+  it("keeps every day-column in the print layout even when a phone tab is selected", () => {
+    render(<WeekSchedule weekData={SEVEN_DAY_WEEK} />);
+
+    expect(screen.getByRole("tablist").className).toContain("print:hidden");
+
+    fireEvent.click(screen.getByRole("tab", { name: "Wednesday" }));
+
+    for (const day of Object.keys(SEVEN_DAY_WEEK)) {
+      expect(
+        document.querySelector(`[data-title="${day}"]`)!.className,
+      ).toContain("print:flex");
+    }
+    // Screen selection is unchanged: Wednesday is the phone column, Monday is not.
+    expect(
+      document.querySelector(`[data-title="Wednesday"]`)!.className,
+    ).not.toContain("hidden");
+    expect(
+      document.querySelector(`[data-title="Monday"]`)!.className,
+    ).toContain("hidden");
   });
 });
