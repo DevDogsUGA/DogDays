@@ -122,7 +122,10 @@ export function TermSelector() {
       value={String(academicPeriod)}
       onValueChange={(v) => setAcademicPeriod(Number(v))}
     >
-      <Select.Trigger className="group border-edge-strong bg-surface-muted text-foreground/80 hover:border-muted flex max-w-2xs flex-1 items-center gap-3 rounded-full border px-3 py-1.5 text-sm font-medium transition-[box-shadow,border-color,color] hover:inset-shadow-sm">
+      <Select.Trigger
+        aria-label="Term"
+        className="group border-edge-strong bg-surface-muted text-foreground/80 hover:border-muted flex max-w-2xs flex-1 items-center gap-3 rounded-full border px-3 py-1.5 text-sm font-medium transition-[box-shadow,border-color,color] hover:inset-shadow-sm"
+      >
         <span className="w-full flex-1 truncate text-left">
           <Select.Value>
             {
@@ -133,6 +136,7 @@ export function TermSelector() {
           </Select.Value>
         </span>
         <CaretUpDownIcon
+          aria-hidden
           weight="bold"
           className="text-muted group-hover:text-foreground transition-colors"
         />
