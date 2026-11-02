@@ -1,6 +1,6 @@
 import type { DateRange, DayOfWeek, Meeting, Section } from "../domain/section";
 
-function timeToMinutes(time: string): number {
+export function timeToMinutes(time: string): number {
   const [h, m] = time.split(":").map(Number);
   return (h ?? 0) * 60 + (m ?? 0);
 }
