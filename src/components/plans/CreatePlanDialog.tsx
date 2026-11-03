@@ -144,6 +144,7 @@ export function CreatePlanDialog({ onClose }: { onClose: () => void }) {
   const [selections, setSelections] = useState<Record<string, CourseSelection>>(
     {},
   );
+  const [minGapMinutes, setMinGapMinutes] = useState<string>();
 
   const { draftPrefs, setPref, isLoading: prefsLoading } = useDraftPrefs();
   const { draftCourses, isLoading: coursesLoading } = useDraftCourses();
@@ -266,6 +267,7 @@ export function CreatePlanDialog({ onClose }: { onClose: () => void }) {
         minCreditHours,
         maxCreditHours,
         showFilledClasses,
+        ...(minGapMinutes && { minGapMinutes: parseInt(minGapMinutes) }),
       });
 
       // An empty CRN list is not a plan. Saving one produces a plan whose
@@ -412,6 +414,18 @@ export function CreatePlanDialog({ onClose }: { onClose: () => void }) {
               </label>
 
               <label className="col-span-2 grid grid-cols-subgrid items-center">
+                <span className="pl-3 text-right font-bold">
+                  Min Time Between Classes
+                </span>
+                <input
+                  className="border-edge-strong bg-surface not-disabled:hover:border-muted flex w-full items-center gap-6 rounded-md border-2 px-3 py-1.5 transition-[box-shadow,border-color] not-disabled:hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-60"
+                  min={0}
+                  onChange={(e) => setMinGapMinutes(e.currentTarget.value)}
+                  type="number"
+                />
+              </label>
+
+              <label className="col-span-2 grid grid-cols-subgrid items-center">
                 <span className="pl-3 text-right font-bold">Campus</span>
                 <Combobox
                   value={campus as keyof typeof campusOptions}
@@ -425,7 +439,7 @@ export function CreatePlanDialog({ onClose }: { onClose: () => void }) {
                 />
               </label>
 
-              <label className="border-edge text-foreground/80 not-disabled:hover:text-foreground col-span-2 flex items-center justify-center gap-4 border-b-2 pb-4 has-disabled:cursor-not-allowed has-disabled:opacity-60 sm:pb-6">
+              <label className="border-edge text-foreground/80 not-disabled:hover:text-foreground col-span-3 flex items-center justify-center gap-4 border-b-2 pb-4 has-disabled:cursor-not-allowed has-disabled:opacity-60 sm:pb-6">
                 <input
                   className="form-checkbox border-edge-strong bg-surface text-primary not-disabled:hover:border-muted focus:ring-primary size-6 rounded-md border-2"
                   type="checkbox"
