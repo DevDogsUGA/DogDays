@@ -54,8 +54,8 @@ export function Navbar() {
           ) : user ? (
             <li>
               <Dropdown.Root>
-                <Dropdown.Trigger className="hover:bg-surface-muted data-[state=open]:bg-surface-muted flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-2xl transition-colors">
-                  <UserAvatar user={user} />
+                <Dropdown.Trigger className="hover:bg-surface-muted data-[state=open]:bg-surface-muted flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-2xl transition-colors" aria-label="Account name">
+                  <UserAvatar user={user}/>
                   <CaretDownIcon weight="bold" className="text-muted text-xs" />
                 </Dropdown.Trigger>
                 <Dropdown.Portal>
