@@ -267,7 +267,7 @@ export function CreatePlanDialog({ onClose }: { onClose: () => void }) {
         minCreditHours,
         maxCreditHours,
         showFilledClasses,
-        minGapMinutes: minGapMinutes ? parseInt(minGapMinutes) : undefined,
+        ...(minGapMinutes && { minGapMinutes: parseInt(minGapMinutes) }),
       });
 
       // An empty CRN list is not a plan. Saving one produces a plan whose
