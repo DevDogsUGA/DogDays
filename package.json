@@ -39,7 +39,7 @@
     "@radix-ui/react-popover": "^1.1.23",
     "@radix-ui/react-select": "^2.3.7",
     "@radix-ui/react-toast": "^1.2.23",
-    "@sentry/cloudflare": "10.75.1",
+    "@sentry/cloudflare": "11.10.0",
     "@sentry/nextjs": "10.75.1",
     "@supabase/ssr": "^0.12.4",
     "@supabase/supabase-js": "^2.112.3",
