@@ -4,6 +4,19 @@ description: The Supabase CLI at the version devtools.config.json pins. That pin
 runs:
   using: composite
   steps:
+    # The local stack binds fixed host ports (54320-54329), inside Linux's
+    # ephemeral range (32768-60999), from which the kernel picks the local
+    # port of every outgoing connection. When one of them, such as a
+    # connection Docker keeps open after an image pull, holds a stack port,
+    # `supabase start` fails with "address already in use". Reserving the
+    # block stops the kernel from handing those ports out; binding them
+    # explicitly still works.
+    - name: Reserve the local stack's ports
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        echo "ephemeral range: $(cat /proc/sys/net/ipv4/ip_local_port_range)"
+        sudo sysctl -w net.ipv4.ip_local_reserved_ports=54320-54329
     - name: Install the pinned Supabase CLI
       shell: bash
       run: |

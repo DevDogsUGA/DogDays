@@ -54,6 +54,13 @@ jobs:
       DEVDOGS_OAUTH_BASE_URL: ${{ vars.E2E_OAUTH_BASE_URL }}
       DEVTOOLS_TELEMETRY: "0"
     steps:
+      # Before anything connects: see .github/actions/setup-supabase. The
+      # stack's fixed ports sit inside Linux's ephemeral range, so an outgoing
+      # connection (an image pull) can already hold one when the stack starts.
+      - name: Reserve the local stack's ports
+        run: |
+          echo "ephemeral range: $(cat /proc/sys/net/ipv4/ip_local_port_range)"
+          sudo sysctl -w net.ipv4.ip_local_reserved_ports=54320-54329
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: ./.github/actions/setup-devtools
       - name: Which devtools will run
