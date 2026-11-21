@@ -10,7 +10,15 @@ import { updateSession } from "~/supabase/middleware";
 import { env } from "~/env";
 import { dogDaysCsp } from "~/config/csp";
 
-const PUBLIC_PATHS = ["/", "/auth/callback", "/courses", "/plans"];
+// `/platform-moderation` is the signed webhook receiver: no session, the
+// signature is the authentication.
+const PUBLIC_PATHS = [
+  "/",
+  "/auth/callback",
+  "/courses",
+  "/plans",
+  "/platform-moderation",
+];
 
 // Authoritative header application -- see @devdogsuga/sdk/headers'
 // `applySecurityHeaders` doc comment for why middleware, not just
